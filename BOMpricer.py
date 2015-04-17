@@ -23,10 +23,10 @@ query_params =  {
         }
     ]
 }
-oral =  { 'Content-Type': 'application/json'}
+header =  { 'Content-Type': 'application/json'}
 #print query_params
 #print json.dumps(query_params)
-response = requests.post(endpoint, data = json.dumps(query_params), headers= oral)
+response = requests.post(endpoint, data = json.dumps(query_params), headers= header)
 #print vars(response)
 #print "The request.get just ran"
 data = response.json

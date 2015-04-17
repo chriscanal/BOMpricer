@@ -1,15 +1,9 @@
-Hi
+This program was created in order to help iRobot Electrical engineers
+find prices of parts more quickly. This python script uses the ECIA
+API to search for up to date prices and buy links on various parts
+from a bill of materials.
 
-this is a read me file
-
-nothing to say about this quiet yet
-
-Still a newb to Github.
-
-I just saw that they recomended that this exist!
+For more information about this script, email ccanal@irobot.com or
+call (832) 671-5487
 
 chris
-
-changes
-
-This commit was done as a kind of test to follow along with the google for entrepreneurs tutorial video
