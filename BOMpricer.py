@@ -19,6 +19,7 @@ import time
 from random import randint
 from pprint import pprint
 from xml.dom import minidom
+import yaml
 
 
 #--------Methods Section------------#
@@ -146,7 +147,7 @@ response = requests.post(endpoint, data = json.dumps(query_params), headers= hea
 data = response.content
 
 #Changes data from string to python dictionary
-decodedData = json.loads(data, object_hook=_decode_dict)
+decodedData = yaml.safe_load(data)
 partData = (((((decodedData['PartResults'])[0])['Distributors'])[0])['DistributorResults'])
 
 #--------Compare Excel-BOM Requirements to Search Results------------#
