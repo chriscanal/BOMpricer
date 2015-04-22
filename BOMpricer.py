@@ -34,120 +34,120 @@ def getPartData(fileLocation):
 
 #This method compares 1 part from the BOM to 1 Part from
 #the ECIA authorized search, and returns the best price
-def
+
+
+
+#Returns the length of the Parts
+def lengthOfPartResults(decodedData):
+    return len(decodedData['PartResults'])
+
+#Returns the length of the Parts
+def lengthOfDistributors(PartResults):
+    return len(PartResults['Distributors'])
+
+#Returns the length of the Parts
+def lengthOfDistributorResults(Distributors):
+    return len(Distributors['DistributorResults'])
+
+
+#Check if BOM Part Number Matches Distributor Part number
+def BOMPartNumberMatches(DistributorResults, BOMpartNumber):
+    if DistributorResults['PartNumber'] = BOMpartNumber:
+        return True
 
 #This method creates an empty part and returns it
 def createNewPart():
     newPart = {
-        'Compliance': {
-            'RoHS': [
-                {
-                    'Description': 'None',
-                    'IsCompliant': 'None',
-                    'Region': 'None'
-                }
-            ]
-        },
-        'Description': 'None',
-        'DistributorPartNumber': 'None',
-        'Links': [
-            {
-                'Type': 'None',
-                'Url': 'None'
-            },
-            {
-                'Type': 'None',
-                'Url': 'None'
-            }
-        ],
-        'Manufacturer': 'None',
-        'PartNumber': 'None',
-        'Pricing': {
-            'CurrencyCode': 'None',
-            'MinimumQuantity': 'None',
-            'Prices': [
-                {
-                    'Amount': 'None',
-                    'FormattedAmount': 'None',
-                    'Quantity': 'None',
-                    'Text': 'None'
-                }
-            ],
-            'QuantityMultiple': 'None'
-        },
-        'Stock': {
-            'Availability': 'None',
-            'QuantityOnHand': 'None'
-        }
+        'lowestPrice':"N/A",
+        'cutOffQuantity':"N/A",
+        'links':"N/A",
+        'Stock':"N/A",
+        'Manufacturer':"N/A",
+        'Vendor':"N/A"
+    }
+    return newPart
+
+#Creates a new Part from searched data and
+#prepares relevant data for writing to file
+def newBestPart(currentPart, pricesIndex, vendor):
+    newPart = {
+        'lowestPrice': ((currentPart['Prices'])[pricesIndex])['Amount']),
+        'cutOffQuantity': ((currentPart['Prices'])[pricesIndex])['Quantity']),
+        'links': currentPart['Links'],
+        'Stock': currentPart['Stock'],
+        'Manufacturer':currentPart['Manufacturer'],
+        'Vendor': vendor
     }
     return newPart
 
 
+#Checks part prices from a given distributor
+#and finds the best cutoff quantity price
+#for the based on the quantity needed
+def checkPricesAndQuantities(currentPart, bestPart, quantityNeeded, vendor):
+    if ((currentPart['Stock'])[0])['QuantityOnHand'] > quantityNeeded:
+        for y in range(0, len(currentPart['Prices']):
+            if ((currentPart['Prices'])[y])['Quantity'] <= quantityNeeded:
+                if (bestPart['lowestPrice'] = "N/A") or (bestPart['lowestPrice'] > ((currentPart['Prices'])[y])['Amount']):
+                    bestPart = newBestPart(currentPart, y, vendor)
+    return bestPart
 
-#Json Parsing methods: These next two methods pars the
-#json and make sure that it is no longer in unicode format
-def _decode_list(data):
-    rv = []
-    for item in data:
-        if isinstance(item, unicode):
-            item = item.encode('utf-8')
-        elif isinstance(item, list):
-            item = _decode_list(item)
-        elif isinstance(item, dict):
-            item = _decode_dict(item)
-        rv.append(item)
-    return rv
+#Iterates through all the data gathered from the
+#API query and finds the cheapest part.
+def findCheapestPart(decodedData, BOMpartNumber, quantityNeeded):
+    bestPart = createNewPart()
+    for i in range(0, lengthOfPartResults(decodedData)):
+        PartResults = (decodedData['PartResults'])[i]
+        for j in range(0, lengthOfDistributors(PartResults)):
+            Distributors = (PartResults['Distributors'])[j]
+            for k in range(0, lengthOfDistributorResults(Distributors)):
+                DistributorResults = (Distributors['DistributorResults'])[k]
+                if BOMPartNumberMatches(DistributorResults, BOMpartNumber):
+                    bestPart = checkPricesAndQuantities(DistributorResults[k], bestPart, quantityNeeded, Distributors['Name'] )
 
-def _decode_dict(data):
-    rv = {}
-    for key, value in data.iteritems():
-        if isinstance(key, unicode):
-            key = key.encode('utf-8')
-        if isinstance(value, unicode):
-            value = value.encode('utf-8')
-        elif isinstance(value, list):
-            value = _decode_list(value)
-        elif isinstance(value, dict):
-            value = _decode_dict(value)
-        rv[key] = value
-    return rv
+
 
 
 #--------API Server Request Section------------#
 
-#Establish Global variables needed for making
-#POST requests to the ECIA Authorized server
-#via the ECIA's API.
-Company_ID = 'iRobot'
-API_Key = '8e2b4c56-05aa-4ce9-82dc-be9a660bb1ea'
-endpoint = 'http://inventory.api.eciaauthorized.com/api/Search/Query'
 
-#Part Queries from any iRobot BOM
-query_params =  {
-    "CompanyID": "iRobot",
-    "APIKey": "8e2b4c56-05aa-4ce9-82dc-be9a660bb1ea",
-    "CountryCode": "",
-    "CurrencyCode": "",
-    "InStockOnly": "false",
-    "ExactMatch": "false",
-    "Queries": [
-        {
-            "SearchToken": "rf202"
-        }
-    ]
-}
-header =  { 'Content-Type': 'application/json'}
+    #Establish Global variables needed for making
+    #POST requests to the ECIA Authorized server
+    #via the ECIA's API.
+    Company_ID = 'iRobot'
+    API_Key = '8e2b4c56-05aa-4ce9-82dc-be9a660bb1ea'
+    endpoint = 'http://inventory.api.eciaauthorized.com/api/Search/Query'
 
-#The request to the ECIA server
-response = requests.post(endpoint, data = json.dumps(query_params), headers= header)
+    #Part Queries from any iRobot BOM
+    query_params =  {
+        "CompanyID": "iRobot",
+        "APIKey": "8e2b4c56-05aa-4ce9-82dc-be9a660bb1ea",
+        "CountryCode": "",
+        "CurrencyCode": "",
+        "InStockOnly": "false",
+        "ExactMatch": "false",
+        "Queries": [{
+                "SearchToken": "ERJ-3EKF4420V"
+            },
+            {
+                "SearchToken": "CRCW060356K2FKEA"
+            },
+            {
+                "SearchToken": "RC0402FR-0747K5L"
+            }
+        ]
+    }
+    header =  { 'Content-Type': 'application/json'}
 
-#Parsing the response. The data is contained
-#in a attribute of the response called 'content'
-#response.content is a string
-data = response.content
+    #The request to the ECIA server
+    response = requests.post(endpoint, data = json.dumps(query_params), headers= header)
 
-#Changes data from string to python dictionary
-decodedData = yaml.safe_load(data)
-partData = (((((decodedData['PartResults'])[0])['Distributors'])[0])['DistributorResults'])
+    #Parsing the response. The data is contained
+    #in a attribute of the response called 'content'
+    #response.content is a string
+    data = response.content
+
+    #Changes data from string to python dictionary
+    decodedData = yaml.safe_load(data)
 
 #--------Compare Excel-BOM Requirements to Search Results------------#
