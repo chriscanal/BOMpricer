@@ -32,10 +32,8 @@ def getPartData(fileLocation):
     out.close()
     return CSVdata
 
-#This method compares 1 part from the BOM to 1 Part from
-#the ECIA authorized search, and returns the best price
 
-
+#--------Compare Excel-BOM Requirements to Search Results------------#
 
 #Returns the length of the Parts
 def lengthOfPartResults(decodedData):
@@ -110,7 +108,20 @@ def findCheapestPart(decodedData, BOMpartNumber, quantityNeeded):
 
 #--------API Server Request Section------------#
 
+def constructPartNumberArray(excelField):
+    partNumberArray = [{
+            "SearchToken": "ERJ-3EKF4420V"
+        },
+        {
+            "SearchToken": "CRCW060356K2FKEA"
+        },
+        {
+            "SearchToken": "RC0402FR-0747K5L"
+        }
+    ]
 
+
+def executeSearch(partNumber):
     #Establish Global variables needed for making
     #POST requests to the ECIA Authorized server
     #via the ECIA's API.
@@ -126,16 +137,7 @@ def findCheapestPart(decodedData, BOMpartNumber, quantityNeeded):
         "CurrencyCode": "",
         "InStockOnly": "false",
         "ExactMatch": "false",
-        "Queries": [{
-                "SearchToken": "ERJ-3EKF4420V"
-            },
-            {
-                "SearchToken": "CRCW060356K2FKEA"
-            },
-            {
-                "SearchToken": "RC0402FR-0747K5L"
-            }
-        ]
+        "Queries": partNumber
     }
     header =  { 'Content-Type': 'application/json'}
 
@@ -149,5 +151,4 @@ def findCheapestPart(decodedData, BOMpartNumber, quantityNeeded):
 
     #Changes data from string to python dictionary
     decodedData = yaml.safe_load(data)
-
-#--------Compare Excel-BOM Requirements to Search Results------------#
+    reutrn decodedData
