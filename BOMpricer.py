@@ -25,7 +25,6 @@ fileLocation = '/Users/christophercanal4/Desktop/SecondBomJohnfortier (1).csv'
 outputFileLocation = "/Users/christophercanal4/Desktop/PriceAndQuantity.csv"
 
 #--------Methods Section------------#
-
 #This method gets the data from the CSV file and returns it
 def getPartData(fileLocation):
     out = open(fileLocation,"rb")
@@ -34,6 +33,17 @@ def getPartData(fileLocation):
     out.close()
     return CSVdata
 
+def findPartNumbersIndex(CSVdata):
+    for x in range(0,CSVdata):
+        for y in range(0, CSVdata[x]):
+            if CSVdata[x][y] = "Part Number":
+                return x, y
+
+def findQuantityIndex(CSVdata):
+    for x in range(0,CSVdata):
+        for y in range(0, CSVdata[x]):
+            if CSVdata[x][y] = "Quantity":
+                return x, y
 
 #--------Compare Excel-BOM Requirements to Search Results------------#
 
@@ -111,16 +121,12 @@ def findCheapestPart(decodedData, BOMpartNumber, quantityNeeded):
 #--------API Server Request Section------------#
 
 def constructPartNumberArray(excelField):
-    partNumberArray = [{
-            "SearchToken": "ERJ-3EKF4420V"
-        },
-        {
-            "SearchToken": "CRCW060356K2FKEA"
-        },
-        {
-            "SearchToken": "RC0402FR-0747K5L"
-        }
-    ]
+    partNumberArray = []
+    for x in range(0,len(excelField)):
+        searchToken = {"SearchToken": excelField[x]}
+        partNumberArray.extend(searchToken)
+    return partNumberArray
+
 
 
 def executeSearch(partNumber):
@@ -155,3 +161,11 @@ def executeSearch(partNumber):
     #Changes data from string to python dictionary
     decodedData = yaml.safe_load(data)
     reutrn decodedData
+
+
+#--------API Server Request Section------------#
+
+def main():
+    CSVdata = getPartData(fileLocation)
+    currentPart, partIndex = findPartNumbersIndex(CSVdata)
+    
