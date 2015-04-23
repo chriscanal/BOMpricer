@@ -21,6 +21,8 @@ from pprint import pprint
 from xml.dom import minidom
 import yaml
 
+fileLocation = '/Users/christophercanal4/Desktop/SecondBomJohnfortier (1).csv'
+outputFileLocation = "/Users/christophercanal4/Desktop/PriceAndQuantity.csv"
 
 #--------Methods Section------------#
 
@@ -139,6 +141,7 @@ def executeSearch(partNumber):
         "ExactMatch": "false",
         "Queries": partNumber
     }
+
     header =  { 'Content-Type': 'application/json'}
 
     #The request to the ECIA server
