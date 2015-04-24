@@ -1,0 +1,9 @@
+#,Type,Grase,per board,loc,Part Number,Manufacturer,Quantity
+300174,"Resistor,Chip,47.0 Ohm,1/10W,1%,SMD,0603,RoHS",1,8,"R171,R173,R175-R176,R190,R192,R194,R197","CRCW060347R0FKEA
+ERJ-3EKF47R0V","Vishay Intertechnology Inc
+Panasonic Corporation",80
+300190,"Resistor,Chip,64.9 Ohm,1/10W,1%,SMD,0603,RoHS",1,4,"R51,R91,R122,R153","ERJ-3EKF64R9V
+CRCW060364R9FKEA","Panasonic Corporation
+Vishay Intertechnology Inc",40
+16513,"Resistor,Chip,51.1K,1/10W,1%,SMD,0603,RoHS",A,1,R13,ERJ-3EKF5112V,Panasonic Corporation,10
+16569,"Capacitor,Cer,1.1nF,50V,SMD,0603,C0G,5%,RoHS",A,1,C387,GRM1885C1H112JA01D,Murata Electronics,10
