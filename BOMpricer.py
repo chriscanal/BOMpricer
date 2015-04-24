@@ -59,7 +59,7 @@ def findBuyLink(partData):
     buyLink = "Not Found"
     if 'links' in partData:
         for x in range(0, len(partData['links'])):
-            if partData['links'][x]['Type'] == 'Buy':
+            if (partData['links'][x])['Type'] == 'Buy':
                 buyLink = partData['links'][x]['Url']
     return buyLink
 
@@ -132,8 +132,8 @@ def lengthOfDistributorResults(Distributors):
 def createNewPart():
     newPart = {
         'partNumber':"Not Found",
-        'lowestPrice':"Not Found",
-        'cutOffQuantity':"Not Found",
+        'lowestPrice': 1000000,
+        'cutOffQuantity': 1000000,
         'links':"Not Found",
         'Stock':"Not Found",
         'Manufacturer':"Not Found",
@@ -193,8 +193,16 @@ def checkPricesAndQuantities(currentPart, bestPart, quantityNeeded, vendor):
                 if 'Prices' in currentPart['Pricing']:
                     for y in range(0, len(currentPart['Pricing']['Prices'])):
                         if ((currentPart['Pricing']['Prices'])[y])['Quantity'] <= quantityNeeded and ((currentPart['Pricing']['Prices'])[y])['Quantity'] != 0:
-                            if ((bestPart['lowestPrice'] == "Not Found") or (bestPart['lowestPrice'] > ((currentPart['Pricing']['Prices'])[y])['Amount']) and (((currentPart['Pricing']['Prices'])[y])['Amount'] != 0) and (((currentPart['Pricing']['Prices'])[y])['Amount'] != None)):
-                                bestPart = newBestPart(currentPart, y, vendor)
+                            print "-----------Test 1----------"
+                            if bestPart['lowestPrice'] > ((currentPart['Pricing']['Prices'])[y])['Amount']:
+                                print "-----------Test 2----------"
+                                if ((currentPart['Pricing']['Prices'])[y])['Amount'] != 0.0:
+                                    print "-----------Test 3----------"
+                                    if (type(((currentPart['Pricing']['Prices'])[y])['Amount']) == type(0.0)):
+                                        print "-----------Test 4----------"
+                                        if (((currentPart['Pricing']['Prices'])[y])['Amount']) != None:
+                                            print "-----------Test 5----------"
+                                            bestPart = newBestPart(currentPart, y, vendor)
     return bestPart
 
 #Iterates through all the data gathered from the

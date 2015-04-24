@@ -1,9 +1,45 @@
 #,Type,Grase,per board,loc,Part Number,Manufacturer,Quantity
+10386,"Resistor,Chip,1.00 Ohm,1/4W,1%,SMD,1206,RoHS",D,3,"R3,R9,R18",RC1206FR-071RL,Yageo Corporation,30
+10552,"Resistor,Chip,0.010 Ohm,1W,1%,SMD,2512,RoHS",A,1,R244,ERJ-M1WSF10MU,Panasonic Corporation,10
+16513,"Resistor,Chip,51.1K,1/10W,1%,SMD,0603,RoHS",A,1,R13,ERJ-3EKF5112V,Panasonic Corporation,10
+16569,"Capacitor,Cer,1.1nF,50V,SMD,0603,C0G,5%,RoHS",A,1,C387,GRM1885C1H112JA01D,Murata Electronics,10
+16596,"Inductor,1000 Ohm@100MHz,6A,Filter,SMD,12x11mm,RoHS",A,4,"L20,L35-L36,L38",ACM1211-102-2PL,TDK Corporation,40
+16598,"Resistor,Chip,0.0 Ohm,1/4W,5%,SMD,1206,RoHS",A,3,"R301,R303-R304",MCR18EZHJ000,ROHM Company Ltd,30
+17790,"Resistor,Chip,1.00M,1/4W,1%,SMD,1206,RoHS",A,1,R288,"ERJ-8ENF1004V
+RC1206FR-071ML","Panasonic Corporation
+Yageo Corporation",10
+19453,"Resistor,MF,47 Ohm,35W,5%,SMD,DPAK,RoHS",A,4,R403-R406,TDH35P47R0JE,Ohmite Manufacturing Company,40
+19457,"IC,TLV7211A,Comparator,R-R In,P-P Out,SMD,SOT-23-5,85C,RoHS",A,1,U54,TLV7211AIDBVR,Texas Instruments,10
 300174,"Resistor,Chip,47.0 Ohm,1/10W,1%,SMD,0603,RoHS",1,8,"R171,R173,R175-R176,R190,R192,R194,R197","CRCW060347R0FKEA
 ERJ-3EKF47R0V","Vishay Intertechnology Inc
 Panasonic Corporation",80
 300190,"Resistor,Chip,64.9 Ohm,1/10W,1%,SMD,0603,RoHS",1,4,"R51,R91,R122,R153","ERJ-3EKF64R9V
 CRCW060364R9FKEA","Panasonic Corporation
 Vishay Intertechnology Inc",40
-16513,"Resistor,Chip,51.1K,1/10W,1%,SMD,0603,RoHS",A,1,R13,ERJ-3EKF5112V,Panasonic Corporation,10
-16569,"Capacitor,Cer,1.1nF,50V,SMD,0603,C0G,5%,RoHS",A,1,C387,GRM1885C1H112JA01D,Murata Electronics,10
+300256,"Resistor,Chip,309 Ohm,1/10W,1%,SMD,0603,RoHS",A,4,"R215,R222,R227,R232","CRCW0603309RFKEA
+ERJ-3EKF3090V","Vishay Intertechnology Inc
+Panasonic Corporation",40
+300277,"Resistor,Chip,475 Ohm,1/10W,1%,SMD,0603,RoHS",1,29,"R177-R188,R196,R198-R208,R242-R243,R271,R310,R315","ERJ-3EKF4750V
+CRCW0603475RFKEA","Panasonic Corporation
+Vishay Intertechnology Inc",290
+300337,"Resistor,Chip,1.96K,1/10W,1%,SMD,0603,RoHS",1,2,"R373,R399","CRCW06031K96FKEA
+ERJ-3EKF1961V","Vishay Intertechnology Inc
+Panasonic Corporation",20
+300356,"Resistor,Chip,3.30K,1/10W,1%,SMD,0603,RoHS",1,4,"R251-R252,R372,R398","ERJ-3EKF3301V
+CRCW06033K30FKEA","Panasonic Corporation
+Vishay Intertechnology Inc",40
+300372,"Resistor,Chip,5.10K,1/10W,1%,SMD,0603,RoHS",1,2,R161-R162,"ERJ-3EKF5101V
+CRCW06035K10FKEA","Panasonic Corporation
+Vishay Intertechnology Inc",20
+300390,"Resistor,Chip,7.50K,1/10W,1%,SMD,0603,RoHS",1,1,R412,"CRCW06037K50FKEA
+ERJ-3EKF7501V","Vishay Intertechnology Inc
+Panasonic Corporation",10
+300391,"Resistor,Chip,7.68K,1/10W,1%,SMD,0603,RoHS",1,2,"R283,R291","ERJ-3EKF7681V
+CRCW06037K68FKEA","Panasonic Corporation
+Vishay Intertechnology Inc",20
+300409,"Resistor,Chip,13.0K,1/10W,1%,SMD,0603,RoHS",A,2,"R362,R388","ERJ-3EKF1302V
+CRCW060313K0FKEA","Panasonic Corporation
+Vishay Intertechnology Inc",20
+300411,"Resistor,Chip,14.0K,1/10W,1%,SMD,0603,RoHS",A,1,R19,"CRCW060314K0FKEA
+ERJ-3EKF1402V","Vishay Intertechnology Inc
+Panasonic Corporation",10
