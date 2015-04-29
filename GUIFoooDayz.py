@@ -2,10 +2,8 @@
 
 from Tkinter import *
 import tkFileDialog
-import csv, os, glob, sys
+import csv, os.path, glob, sys
 
-
-fileLocation = '/home/tcolombo/Desktop/Git Project/'
 
 class Window(Tk):
 
@@ -37,10 +35,13 @@ class Window(Tk):
     self.topButton.pack()
     
   def file_save(self):
-    f = tkFileDialog.asksaveasfile(mode='w', defaultextension =".csv")
-    completeName = os.path.join(fileLocation, f)
-    f.write(os.getcwd)
-    f.close()
+    f = tkFileDialog.askopenfilename()
+    out = open(f, 'r')
+    CSVdata = csv.reader(out, skipinitialspace=False)
+    CSVdata = [row for row in CSVdata]
+    out.close()
+    print CSVdata
+
   
 if __name__ == "__main__":
     window = Window(None)
