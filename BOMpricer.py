@@ -334,4 +334,6 @@ def main():
         currentPart = currentPart+1
     finalPartData = formatSearchResults(searchResults)
     writeObjectToFile(finalPartData)
+
+
 main()
