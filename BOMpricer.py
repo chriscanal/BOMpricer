@@ -22,7 +22,7 @@ from xml.dom import minidom
 import yaml
 import pprint
 
-fileLocation = '//Users/christophercanal4/GithubProjects/iRobot/BOMpricer/shortTest.csv'
+fileLocation = '/Users/christophercanal4/GithubProjects/iRobot/BOMpricer/shortTest.csv'
 outputFileLocation = "/Users/christophercanal4/Desktop/PriceAndQuantity.csv"
 
 #--------Methods Section------------#
@@ -286,4 +286,6 @@ def main():
         currentPart = currentPart+1
     finalPartData = formatSearchResults(searchResults)
     writeObjectToFile(finalPartData)
+
+
 main()
