@@ -33,7 +33,7 @@ class Window(Tk):
     Tk.__init__(self, parent)
     self.parent = parent
     self.initialize()
-    
+
     self.dir_opt = options = {}
     options['initialdir'] = 'C:\\'
     options['mustexist'] = False
@@ -55,7 +55,7 @@ class Window(Tk):
     button_opt = {'padx': 5, 'pady': 5}
     self.topButton = Button(self.top, text='Open Directory', command=self.file_save)
     self.topButton.pack()
-    
+
   def file_save(self):
     f = tkFileDialog.askopenfilename()
     out = open(f, 'r')
@@ -63,7 +63,7 @@ class Window(Tk):
     CSVMatrix = [row for row in CSVMatrix]
     out.close()
     print CSVMatrix
-  
+
 if __name__ == "__main__":
     window = Window(None)
     window.title("Import CSV File")
