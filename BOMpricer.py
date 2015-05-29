@@ -59,7 +59,7 @@ def formatSearchResults(searchData):
     formattedData.append(['Part Number','Lowest Price Found','Vendor','Buy Link','DataSheet Link','Amount in Stock','Manufacturer'])
     for x in range(0, len(searchData)):
         partNumber = searchData[x]['partNumber']
-        lowestPrice = str(searchData[x]['lowestPrice'])
+        lowestPrice = checkForPrice(searchData[x]['lowestPrice'])
         vendor = searchData[x]['Vendor']
         buyLink = findBuyLink(searchData[x])
         datasheet = findDatasheetLink(searchData[x])
@@ -74,11 +74,17 @@ def findBuyLink(partData):
     buyLink = "Not Found"
     if 'links' in partData:
         for x in range(0, len(partData['links'])):
-            if (partData['links'][x])['Type'] == 'Buy':
-                buyLink = partData['links'][x]['Url']
+            if 'Type' in (partData['links'][x]):
+                if (partData['links'][x])['Type'] == 'Buy':
+                    if 'Url' in partData['links'][x]:
+                        buyLink = partData['links'][x]['Url']
     return buyLink
 
 
+def checkForPrice(price):
+    if price == 1000000:
+        price = 0.0
+    return str(price)
 
 def findStockAmount(stockData):
     quantityOnHand = "unknown"
@@ -92,8 +98,10 @@ def findDatasheetLink(partData):
     datasheetLink = "Not Found"
     if 'links' in partData:
         for x in range(0, len(partData['links'])):
-            if partData['links'][x]['Type'] == 'Datasheet':
-                datasheetLink = partData['links'][x]['Url']
+            if 'Type' in (partData['links'][x]):
+                if partData['links'][x]['Type'] == 'Datasheet':
+                    if 'Url' in partData['links'][x]:
+                        datasheetLink = partData['links'][x]['Url']
     return datasheetLink
 
 
@@ -207,17 +215,19 @@ def checkPricesAndQuantities(currentPart, bestPart, quantityNeeded, vendor):
             if 'Pricing' in currentPart:
                 if 'Prices' in currentPart['Pricing']:
                     for y in range(0, len(currentPart['Pricing']['Prices'])):
-                        if ((currentPart['Pricing']['Prices'])[y])['Quantity'] <= quantityNeeded and ((currentPart['Pricing']['Prices'])[y])['Quantity'] != 0:
-                            print "-----------Test 1----------"
-                            if bestPart['lowestPrice'] > ((currentPart['Pricing']['Prices'])[y])['Amount']:
-                                print "-----------Test 2----------"
-                                if ((currentPart['Pricing']['Prices'])[y])['Amount'] != 0.0:
-                                    print "-----------Test 3----------"
-                                    if (type(((currentPart['Pricing']['Prices'])[y])['Amount']) == type(0.0)):
-                                        print "-----------Test 4----------"
-                                        if (((currentPart['Pricing']['Prices'])[y])['Amount']) != None:
-                                            print "-----------Test 5----------"
-                                            bestPart = newBestPart(currentPart, y, vendor)
+                        if 'Quantity' in currentPart['Pricing']['Prices'][y]:
+                            if ((currentPart['Pricing']['Prices'])[y])['Quantity'] <= quantityNeeded and ((currentPart['Pricing']['Prices'])[y])['Quantity'] != 0:
+                                print "-----------Test 1----------"
+                                if 'Amount' in currentPart['Pricing']['Prices'][y]:
+                                    if bestPart['lowestPrice'] > ((currentPart['Pricing']['Prices'])[y])['Amount']:
+                                        print "-----------Test 2----------"
+                                        if ((currentPart['Pricing']['Prices'])[y])['Amount'] != 0.0:
+                                            print "-----------Test 3----------"
+                                            if (type(((currentPart['Pricing']['Prices'])[y])['Amount']) == type(0.0) or type(((currentPart['Pricing']['Prices'])[y])['Amount']) == type(0)):
+                                                print "-----------Test 4----------"
+                                                if (((currentPart['Pricing']['Prices'])[y])['Amount']) != None:
+                                                    print "-----------Test 5----------"
+                                                    bestPart = newBestPart(currentPart, y, vendor)
     return bestPart
 
 #Iterates through all the data gathered from the
@@ -225,16 +235,19 @@ def checkPricesAndQuantities(currentPart, bestPart, quantityNeeded, vendor):
 def findCheapestPart(decodedData, BOMpartNumber, quantityNeeded):
     bestPart = createNewPart()
     pprint.pprint(bestPart)
-    for i in range(0, lengthOfPartResults(decodedData)):
-        PartResults = (decodedData['PartResults'])[i]
-        for j in range(0, lengthOfDistributors(PartResults)):
-            Distributors = (PartResults['Distributors'])[j]
-            for k in range(0, lengthOfDistributorResults(Distributors)):
-                DistributorResults = (Distributors['DistributorResults'])[k]
-                if BOMPartNumberMatches(DistributorResults, BOMpartNumber):
-                    bestPart = checkPricesAndQuantities(DistributorResults, bestPart, quantityNeeded, Distributors['Name'] )
+    if 'PartResults' in decodedData:
+        for i in range(0, lengthOfPartResults(decodedData)):
+            PartResults = (decodedData['PartResults'])[i]
+            if 'Distributors' in PartResults:
+                for j in range(0, lengthOfDistributors(PartResults)):
+                    Distributors = (PartResults['Distributors'])[j]
+                    if 'DistributorResults' in Distributors:
+                        for k in range(0, lengthOfDistributorResults(Distributors)):
+                            DistributorResults = (Distributors['DistributorResults'])[k]
+                            if 'Name' in Distributors:
+                                if BOMPartNumberMatches(DistributorResults, BOMpartNumber):
+                                    bestPart = checkPricesAndQuantities(DistributorResults, bestPart, quantityNeeded, Distributors['Name'] )
     return bestPart
-
 
 
 
@@ -297,7 +310,7 @@ def mainProgram():
     quantityIndex = findQuantityIndex(CSVdata)
     print "quantityIndex"
     while (currentPart < len(CSVdata)):
-        print "while Loop begin"
+        print "while Loop Number "+`currentPart`
         partNumberArray = seperatePartNumbers(CSVdata[currentPart][partIndex])
         formattedPartNumberArray = formatPartNumberArray(partNumberArray)
         ECIAdata = executeSearch(formattedPartNumberArray)
@@ -308,6 +321,7 @@ def mainProgram():
         currentPart = currentPart+1
     finalPartData = formatSearchResults(searchResults)
     writeObjectToFile(finalPartData)
+    quitProgram()
 
 #-------------------GUI Functions---------------------------#
 
@@ -321,19 +335,25 @@ def openCSVfile():
     return tkFileDialog.askopenfilename()
 
 
-
 def quitProgram():
     mExit = messagebox.askokcancel(title="Quit",message="Are You Sure")
     if mExit > 0:
         BOMgui.destory()
         return
 
+def raise_above_all(window):
+    window.attributes('-topmost', 1)
+    window.attributes('-topmost', 0)
 
+
+userMessage = "Welcome to the iRobot's BOM pricer! \nThis program used the ECIA Authorized search engine to find \nthe lowest priced parts in stock and ready to buy."
 
 BOMgui = Tk()
-BOMgui.geometry('400x400+300+300')
-BOMgui.title("Chris Canal's price finder")
-BOMbutton = Button(BOMgui, text = "OK", command = mainProgram).pack()
+BOMgui.geometry('600x600+300+300')
+BOMgui.title("ECIA Electronic Parts Price Finder")
+mlabel = Label(text=userMessage).pack()
+BOMbutton = Button(BOMgui, text = "Open", command = mainProgram).pack()
+raise_above_all(BOMgui)
 
 
 BOMgui.mainloop()
