@@ -8,6 +8,16 @@
 #Got some help with parsing Json from:
 #http://stackoverflow.com/questions/956867/how-to-get-string-objects-instead-of-unicode-ones-from-json-in-python
 
+#!/usr/bin/python
+
+#This file was written by Chris Canal for iRobot
+#If you have any questions or need help with
+#a similair script, please contact me at
+#chriscanal@chriscanal.com
+
+#Got some help with parsing Json from:
+#http://stackoverflow.com/questions/956867/how-to-get-string-objects-instead-of-unicode-ones-from-json-in-python
+
 #Import dependencies
 import requests
 import json
@@ -22,56 +32,13 @@ from xml.dom import minidom
 import yaml
 import pprint
 from Tkinter import *
+import tkMessageBox
 import tkFileDialog
 import glob
 
+fileLocation = "Unknown"
+outputFileLocation = "/Users/chris/GithubProjects/BOMpricer/PriceAndQuantity.csv"
 CSVMatrix = []
-
-class Window(Tk):
-
-  def __init__(self, parent):
-    Tk.__init__(self, parent)
-    self.parent = parent
-    self.initialize()
-
-    self.dir_opt = options = {}
-    options['initialdir'] = 'C:\\'
-    options['mustexist'] = False
-    options['parent'] = self.parent
-
-  def initialize(self):
-    self.geometry("600x400+30+30")
-    self.wButton = Button(self, text='Import', command = self.OnButtonClick)
-    self.wButton.pack()
-    self.check = Checkbutton(text="Digikey Only")
-    self.check.pack()
-
-  def OnButtonClick(self):
-    self.top = Toplevel()
-    self.top.title("Browse For File")
-    self.top.geometry("300x150+30+30")
-    self.top.transient(self)
-    self.wButton.config(state='disabled')
-    button_opt = {'padx': 5, 'pady': 5}
-    self.topButton = Button(self.top, text='Open Directory', command=self.file_save)
-    self.topButton.pack()
-
-  def file_save(self):
-    f = tkFileDialog.askopenfilename()
-    out = open(f, 'r')
-    CSVMatrix = csv.reader(out, skipinitialspace=False)
-    CSVMatrix = [row for row in CSVMatrix]
-    out.close()
-    print CSVMatrix
-
-if __name__ == "__main__":
-    window = Window(None)
-    window.title("Import CSV File")
-    window.mainloop()
-
-
-
-outputFileLocation = "/Users/christophercanal4/Desktop/PriceAndQuantity.csv"
 
 #--------Methods Section------------#
 #This method gets the data from the CSV file and returns it
@@ -318,12 +285,19 @@ def executeSearch(partNumber):
 
 #--------API Server Request Section------------#
 
-def main():
+def mainProgram():
+    fileLocation = openCSVfile()
+    print "OpenCSV just completed"
     searchResults = []
-    CSVdata = CSVMatrix
+    print "SearchResults completed"
+    CSVdata = getPartData(fileLocation)
+    print "CSVMatrix"
     currentPart, partIndex = findPartNumbersIndex(CSVdata)
+    print "current Part"
     quantityIndex = findQuantityIndex(CSVdata)
+    print "quantityIndex"
     while (currentPart < len(CSVdata)):
+        print "while Loop begin"
         partNumberArray = seperatePartNumbers(CSVdata[currentPart][partIndex])
         formattedPartNumberArray = formatPartNumberArray(partNumberArray)
         ECIAdata = executeSearch(formattedPartNumberArray)
@@ -335,5 +309,31 @@ def main():
     finalPartData = formatSearchResults(searchResults)
     writeObjectToFile(finalPartData)
 
+#-------------------GUI Functions---------------------------#
 
-main()
+def startPricing():
+    popUpLabel = Label(BOMgui,text="The program has started looking for the lowest prices").pack()
+
+def printHello():
+    print "Hello Chris"
+
+def openCSVfile():
+    return tkFileDialog.askopenfilename()
+
+
+
+def quitProgram():
+    mExit = messagebox.askokcancel(title="Quit",message="Are You Sure")
+    if mExit > 0:
+        BOMgui.destory()
+        return
+
+
+
+BOMgui = Tk()
+BOMgui.geometry('400x400+300+300')
+BOMgui.title("Chris Canal's price finder")
+BOMbutton = Button(BOMgui, text = "OK", command = mainProgram).pack()
+
+
+BOMgui.mainloop()
