@@ -35,10 +35,18 @@ from Tkinter import *
 import tkMessageBox
 import tkFileDialog
 import glob
+from threading import Thread
+
+
+global fileLocation
+global outputFileLocation
+global CSVMatrix
+global searchResults
 
 fileLocation = "Unknown"
 outputFileLocation = "/Users/chris/GithubProjects/BOMpricer/PriceAndQuantity.csv"
 CSVMatrix = []
+searchResults = []
 
 #--------Methods Section------------#
 #This method gets the data from the CSV file and returns it
@@ -299,10 +307,11 @@ def executeSearch(partNumber):
 #--------API Server Request Section------------#
 
 def mainProgram():
-    fileLocation = openCSVfile()
+    startPricing()
+    fileLocation = "Unknown"
+    while fileLocation == "Unknown":
+        fileLocation = openCSVfile()
     print "OpenCSV just completed"
-    searchResults = []
-    print "SearchResults completed"
     CSVdata = getPartData(fileLocation)
     print "CSVMatrix"
     currentPart, partIndex = findPartNumbersIndex(CSVdata)
@@ -318,12 +327,28 @@ def mainProgram():
         searchResults.append(bestPart)
         print "-------------Search Results Thus Far--------------"
         pprint.pprint(searchResults)
+        displayPartData(searchResults)
         currentPart = currentPart+1
     finalPartData = formatSearchResults(searchResults)
     writeObjectToFile(finalPartData)
     quitProgram()
 
 #-------------------GUI Functions---------------------------#
+def displayPartData1():
+    time.sleep(5)
+    displayPartData(searchResults)
+
+def displayPartData(searchResults):
+    dataMatrix = formatSearchResults(searchResults)
+    for i in range(0, len(dataMatrix)):
+        for j in range(0, len(dataMatrix[i])):
+            theMessage = dataMatrix[i][j]
+            updateBOMgui(theMessage, i, j)
+            print theMessage
+
+def updateBOMgui(newLabel, x, y):
+    Label(BOMgui, text=newLabel).grid(row=x+2,column=y)
+
 
 def startPricing():
     popUpLabel = Label(BOMgui,text="The program has started looking for the lowest prices").pack()
@@ -345,15 +370,33 @@ def raise_above_all(window):
     window.attributes('-topmost', 1)
     window.attributes('-topmost', 0)
 
+def TestUpdate(counter):
+    counter+=1
+    TextMessage="The new Data is: "+str(counter)
+    Label(BOMgui, text=TextMessage).grid(row=counter,column=1)
 
-userMessage = "Welcome to the iRobot's BOM pricer! \nThis program used the ECIA Authorized search engine to find \nthe lowest priced parts in stock and ready to buy."
+def TestUpdate1():
+    TestUpdate(counter)
 
-BOMgui = Tk()
-BOMgui.geometry('600x600+300+300')
-BOMgui.title("ECIA Electronic Parts Price Finder")
-mlabel = Label(text=userMessage).pack()
-BOMbutton = Button(BOMgui, text = "Open", command = mainProgram).pack()
-raise_above_all(BOMgui)
+def mainProgram1():
+    theMain = Thread(target=mainProgram, args=())
+    theMain.start()
+    GUIupdater = Thread(target=displayPartData1)
+    GUIupdater.start()
 
 
-BOMgui.mainloop()
+def guiFunctions():
+    BOMgui.title("ECIA Electronic Parts Price Finder")
+    BOMbutton = Button(BOMgui, text = "Open", command = mainProgram1).grid(row=0,column=0)
+    BOMbutton2 = Button(BOMgui, text = "TestUpdate", command = TestUpdate1).grid(row=0,column=1)
+    theLabel = Label(BOMgui, text=userMessage).grid(row=0,column=2)
+    raise_above_all(BOMgui)
+
+
+if __name__ == "__main__":
+    userMessage = "Welcome to the iRobot's BOM pricer! \nThis program used the ECIA Authorized search engine to find \nthe lowest priced parts in stock and ready to buy.\nIf you have questions or need help of any kind\n please contact Chris Canal, a former intern at iRobot.\nChris Canal can be reached at chriscanal@chriscanal.com"
+    BOMgui = Tk()
+    BOMgui.geometry('1200x1200')
+    mainThread = Thread(target=guiFunctions, args=())
+    mainThread.start()
+    BOMgui.mainloop()
