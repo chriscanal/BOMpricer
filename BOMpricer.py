@@ -42,9 +42,10 @@ global fileLocation
 global outputFileLocation
 global CSVMatrix
 global searchResults
+global outputFileLocation
 
 fileLocation = "Unknown"
-outputFileLocation = "/Users/chris/GithubProjects/BOMpricer/PriceAndQuantity.csv"
+outputFileLocation = "Unknown"
 CSVMatrix = []
 searchResults = []
 
@@ -359,6 +360,13 @@ def printHello():
 def openCSVfile():
     return tkFileDialog.askopenfilename()
 
+def getOUtoutFileLocation():
+    outputFileLocation = tkFileDialog.askdirectory()
+    if "/" in outputFileLocation:
+        outputFileLocation += "/PricesAndBuyLinks.csv"
+    else:
+        outputFileLocation += "\PricesAndBuyLinks.csv"
+    print outputFileLocation
 
 def quitProgram():
     mExit = messagebox.askokcancel(title="Quit",message="Are You Sure")
@@ -378,23 +386,43 @@ def TestUpdate(counter):
 def TestUpdate1():
     TestUpdate(counter)
 
-def mainProgram1():
+def startMain():
     theMain = Thread(target=mainProgram, args=())
     theMain.start()
     GUIupdater = Thread(target=displayPartData1)
     GUIupdater.start()
 
+def threadThreeButtons():
+    buttonOne = Thread(target=chooseLocation, args=())
+    buttonOne.start()
+    buttonTwo = Thread(target=openCSVfileLocation, args=())
+    buttonTwo.start()
+    buttonThree = Thread(target=startSearch, args=())
+    buttonThree.start()
+
+def chooseLocation():
+    Spacing0 = Label(BOMgui, text="                  ").grid(row=0,column=0)
+    stepOneLabel = Label(BOMgui, text="STEP ONE:\nChoose the output\nfile location\n ").grid(row=0,column=1)
+    stepOneButton = Button(BOMgui, text = "Choose Folder", command = getOUtoutFileLocation).grid(row=1,column=1)
+
+def openCSVfileLocation():
+    Spacing1 = Label(BOMgui, text="                  ").grid(row=0,column=2)
+    stepTwoLabel = Label(BOMgui, text="STEP TWO:\nOpen the BOM file.\nnote:This file must be\nin csv format").grid(row=0,column=3)
+    stepTwoButton = Button(BOMgui, text = "Open BOM csv file", command = startMain).grid(row=1,column=3)
+
+def startSearch():
+    Spacing2 = Label(BOMgui, text="                  ").grid(row=0,column=4)
+    stepThreeLabel = Label(BOMgui, text="STEP THREE:\nBegin looking for\npart Links and Prices!\n  ").grid(row=0,column=5)
+    stepThreeButton = Button(BOMgui, text = "START", command = startMain).grid(row=1,column=5)
 
 def guiFunctions():
     BOMgui.title("ECIA Electronic Parts Price Finder")
-    BOMbutton = Button(BOMgui, text = "Open", command = mainProgram1).grid(row=0,column=0)
-    BOMbutton2 = Button(BOMgui, text = "TestUpdate", command = TestUpdate1).grid(row=0,column=1)
-    theLabel = Label(BOMgui, text=userMessage).grid(row=0,column=2)
+    userMessage = "Welcome to the iRobot's BOM pricer! \nThis program used the ECIA Authorized search engine to find \nthe lowest priced parts in stock and ready to buy.\nIf you have questions or need help of any kind\n please contact Chris Canal, a former intern at iRobot.\nChris Canal can be reached at chriscanal@chriscanal.com"
+    buttonThread = Thread(target=threadThreeButtons, args=())
+    buttonThread.start()
     raise_above_all(BOMgui)
 
-
 if __name__ == "__main__":
-    userMessage = "Welcome to the iRobot's BOM pricer! \nThis program used the ECIA Authorized search engine to find \nthe lowest priced parts in stock and ready to buy.\nIf you have questions or need help of any kind\n please contact Chris Canal, a former intern at iRobot.\nChris Canal can be reached at chriscanal@chriscanal.com"
     BOMgui = Tk()
     BOMgui.geometry('1200x1200')
     mainThread = Thread(target=guiFunctions, args=())
