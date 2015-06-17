@@ -308,19 +308,10 @@ def executeSearch(partNumber):
 #--------API Server Request Section------------#
 
 def mainProgram():
-    startPricing()
-    fileLocation = "Unknown"
-    while fileLocation == "Unknown":
-        fileLocation = openCSVfile()
-    print "OpenCSV just completed"
     CSVdata = getPartData(fileLocation)
-    print "CSVMatrix"
     currentPart, partIndex = findPartNumbersIndex(CSVdata)
-    print "current Part"
     quantityIndex = findQuantityIndex(CSVdata)
-    print "quantityIndex"
     while (currentPart < len(CSVdata)):
-        print "while Loop Number "+`currentPart`
         partNumberArray = seperatePartNumbers(CSVdata[currentPart][partIndex])
         formattedPartNumberArray = formatPartNumberArray(partNumberArray)
         ECIAdata = executeSearch(formattedPartNumberArray)
@@ -336,7 +327,7 @@ def mainProgram():
 
 #-------------------GUI Functions---------------------------#
 def displayPartData1():
-    time.sleep(5)
+    time.sleep(3)
     displayPartData(searchResults)
 
 def displayPartData(searchResults):
@@ -344,21 +335,18 @@ def displayPartData(searchResults):
     for i in range(0, len(dataMatrix)):
         for j in range(0, len(dataMatrix[i])):
             theMessage = dataMatrix[i][j]
+            if len(theMessage) > 30:
+                theMessage = theMessage[0:29]+"..."
             updateBOMgui(theMessage, i, j)
             print theMessage
 
 def updateBOMgui(newLabel, x, y):
-    Label(BOMgui, text=newLabel).grid(row=x+2,column=y)
-
-
-def startPricing():
-    popUpLabel = Label(BOMgui,text="The program has started looking for the lowest prices").pack()
-
-def printHello():
-    print "Hello Chris"
+    Label(BOMgui, text=newLabel).grid(row=x+13,column=y)
 
 def openCSVfile():
-    return tkFileDialog.askopenfilename()
+    global fileLocation
+    fileLocation =  tkFileDialog.askopenfilename()
+    CSVlabel = Label(BOMgui, text=fileLocation, foreground="red").grid(row=3,column=1)
 
 def getOUtoutFileLocation():
     outputFileLocation = tkFileDialog.askdirectory()
@@ -366,7 +354,7 @@ def getOUtoutFileLocation():
         outputFileLocation += "/PricesAndBuyLinks.csv"
     else:
         outputFileLocation += "\PricesAndBuyLinks.csv"
-    print outputFileLocation
+    outputFileLabel = Label(BOMgui, text=outputFileLocation, foreground="red").grid(row=3,column=3)
 
 def quitProgram():
     mExit = messagebox.askokcancel(title="Quit",message="Are You Sure")
@@ -393,22 +381,25 @@ def startMain():
     GUIupdater.start()
 
 def threadThreeButtons():
-    buttonOne = Thread(target=chooseLocation, args=())
+    buttonOne = Thread(target=openCSVfileLocation, args=())
     buttonOne.start()
-    buttonTwo = Thread(target=openCSVfileLocation, args=())
+    buttonOne.join()
+    buttonTwo = Thread(target=chooseLocation, args=())
     buttonTwo.start()
+    buttonTwo.join()
     buttonThree = Thread(target=startSearch, args=())
     buttonThree.start()
-
-def chooseLocation():
-    Spacing0 = Label(BOMgui, text="                  ").grid(row=0,column=0)
-    stepOneLabel = Label(BOMgui, text="STEP ONE:\nChoose the output\nfile location\n ").grid(row=0,column=1)
-    stepOneButton = Button(BOMgui, text = "Choose Folder", command = getOUtoutFileLocation).grid(row=1,column=1)
+    buttonThree.join()
 
 def openCSVfileLocation():
-    Spacing1 = Label(BOMgui, text="                  ").grid(row=0,column=2)
-    stepTwoLabel = Label(BOMgui, text="STEP TWO:\nOpen the BOM file.\nnote:This file must be\nin csv format").grid(row=0,column=3)
-    stepTwoButton = Button(BOMgui, text = "Open BOM csv file", command = startMain).grid(row=1,column=3)
+    Spacing1 = Label(BOMgui, text="                  ").grid(row=0,column=0)
+    stepTwoLabel = Label(BOMgui, text="STEP ONE:\nOpen the BOM file.\nnote:This file must be\nin csv format").grid(row=0,column=1)
+    stepTwoButton = Button(BOMgui, text = "Open BOM csv file", command = openCSVfile).grid(row=1,column=1)
+
+def chooseLocation():
+    Spacing0 = Label(BOMgui, text="                  ").grid(row=0,column=2)
+    stepOneLabel = Label(BOMgui, text="STEP TWO:\nChoose a folder to\nsave your output file:\nPricesAndBuyLinks.csv ").grid(row=0,column=3)
+    stepOneButton = Button(BOMgui, text = "Choose Folder", command = getOUtoutFileLocation).grid(row=1,column=3)
 
 def startSearch():
     Spacing2 = Label(BOMgui, text="                  ").grid(row=0,column=4)
@@ -420,6 +411,7 @@ def guiFunctions():
     userMessage = "Welcome to the iRobot's BOM pricer! \nThis program used the ECIA Authorized search engine to find \nthe lowest priced parts in stock and ready to buy.\nIf you have questions or need help of any kind\n please contact Chris Canal, a former intern at iRobot.\nChris Canal can be reached at chriscanal@chriscanal.com"
     buttonThread = Thread(target=threadThreeButtons, args=())
     buttonThread.start()
+    buttonThread.join()
     raise_above_all(BOMgui)
 
 if __name__ == "__main__":
