@@ -308,6 +308,7 @@ def executeSearch(partNumber):
 #--------API Server Request Section------------#
 
 def mainProgram():
+    global outputFileLocation
     CSVdata = getPartData(fileLocation)
     currentPart, partIndex = findPartNumbersIndex(CSVdata)
     quantityIndex = findQuantityIndex(CSVdata)
@@ -334,13 +335,17 @@ def displayPartData(searchResults):
     dataMatrix = formatSearchResults(searchResults)
     for i in range(0, len(dataMatrix)):
         for j in range(0, len(dataMatrix[i])):
-            theMessage = dataMatrix[i][j]
+            if i == 0:
+                theMessage = dataMatrix[i][j]
+            else:
+                theMessage = dataMatrix[len(dataMatrix)-i][j]
             if len(theMessage) > 30:
                 theMessage = theMessage[0:29]+"..."
             updateBOMgui(theMessage, i, j)
             print theMessage
 
 def updateBOMgui(newLabel, x, y):
+    Label(BOMgui, text="                                      ").grid(row=x+13,column=y)
     Label(BOMgui, text=newLabel).grid(row=x+13,column=y)
 
 def openCSVfile():
@@ -349,6 +354,7 @@ def openCSVfile():
     CSVlabel = Label(BOMgui, text=fileLocation, foreground="red").grid(row=3,column=1)
 
 def getOUtoutFileLocation():
+    global outputFileLocation
     outputFileLocation = tkFileDialog.askdirectory()
     if "/" in outputFileLocation:
         outputFileLocation += "/PricesAndBuyLinks.csv"
@@ -357,7 +363,7 @@ def getOUtoutFileLocation():
     outputFileLabel = Label(BOMgui, text=outputFileLocation, foreground="red").grid(row=3,column=3)
 
 def quitProgram():
-    mExit = messagebox.askokcancel(title="Quit",message="Are You Sure")
+    mExit = tkMessageBox.askokcancel(title="Process Completed Successfully",message="Click OK to exit the program")
     if mExit > 0:
         BOMgui.destory()
         return
