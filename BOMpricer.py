@@ -37,7 +37,6 @@ import tkFileDialog
 import glob
 from threading import Thread
 
-
 global fileLocation
 global outputFileLocation
 global CSVMatrix
@@ -75,8 +74,6 @@ def formatSearchResults(searchData):
         stock = str(findStockAmount(searchData[x]['Stock']))
         manufacturer = searchData[x]['Manufacturer']
         formattedData.append([partNumber, lowestPrice, vendor, buyLink, datasheet, stock, manufacturer])
-    print "-----------------Formatted Data-----------------"
-    pprint.pprint(formattedData)
     return formattedData
 
 def findBuyLink(partData):
@@ -200,7 +197,6 @@ def BOMPartNumberMatches(DistributorResults, BOMpartNumber):
             halfLength = (len(DistributorResults['PartNumber']))/2
             for x in range(0, len(BOMpartNumber)):
                 if halfLength > len(BOMpartNumber[x]):
-                    print "halfLength is equal to: "+halfLength
                     halfLength = len(BOMpartNumber[x])
                 if DistributorResults['PartNumber'][0:halfLength] == BOMpartNumber[x][0:halfLength]:
                     return True
@@ -226,16 +222,11 @@ def checkPricesAndQuantities(currentPart, bestPart, quantityNeeded, vendor):
                     for y in range(0, len(currentPart['Pricing']['Prices'])):
                         if 'Quantity' in currentPart['Pricing']['Prices'][y]:
                             if ((currentPart['Pricing']['Prices'])[y])['Quantity'] <= quantityNeeded and ((currentPart['Pricing']['Prices'])[y])['Quantity'] != 0:
-                                print "-----------Test 1----------"
                                 if 'Amount' in currentPart['Pricing']['Prices'][y]:
                                     if bestPart['lowestPrice'] > ((currentPart['Pricing']['Prices'])[y])['Amount']:
-                                        print "-----------Test 2----------"
                                         if ((currentPart['Pricing']['Prices'])[y])['Amount'] != 0.0:
-                                            print "-----------Test 3----------"
                                             if (type(((currentPart['Pricing']['Prices'])[y])['Amount']) == type(0.0) or type(((currentPart['Pricing']['Prices'])[y])['Amount']) == type(0)):
-                                                print "-----------Test 4----------"
                                                 if (((currentPart['Pricing']['Prices'])[y])['Amount']) != None:
-                                                    print "-----------Test 5----------"
                                                     bestPart = newBestPart(currentPart, y, vendor)
     return bestPart
 
@@ -243,7 +234,6 @@ def checkPricesAndQuantities(currentPart, bestPart, quantityNeeded, vendor):
 #API query and finds the cheapest part.
 def findCheapestPart(decodedData, BOMpartNumber, quantityNeeded):
     bestPart = createNewPart()
-    pprint.pprint(bestPart)
     if 'PartResults' in decodedData:
         for i in range(0, lengthOfPartResults(decodedData)):
             PartResults = (decodedData['PartResults'])[i]
@@ -318,12 +308,10 @@ def mainProgram():
         ECIAdata = executeSearch(formattedPartNumberArray)
         bestPart = findCheapestPart(ECIAdata, partNumberArray, int(CSVdata[currentPart][quantityIndex]))
         searchResults.append(bestPart)
-        print "-------------Search Results Thus Far--------------"
-        pprint.pprint(searchResults)
-        displayPartData(searchResults)
         currentPart = currentPart+1
     finalPartData = formatSearchResults(searchResults)
     writeObjectToFile(finalPartData)
+    time.sleep(1)
     quitProgram()
 
 #-------------------GUI Functions---------------------------#
@@ -341,11 +329,16 @@ def displayPartData(searchResults):
                 theMessage = dataMatrix[len(dataMatrix)-i][j]
             if len(theMessage) > 30:
                 theMessage = theMessage[0:29]+"..."
+            else:
+                spaceLength = 33-len(theMessage)
+                spacing = ""
+                for z in range(spaceLength/2):
+                    spacing += " "
+                theMessage = spacing+theMessage+spacing
             updateBOMgui(theMessage, i, j)
-            print theMessage
 
 def updateBOMgui(newLabel, x, y):
-    Label(BOMgui, text="                                      ").grid(row=x+13,column=y)
+    Label(BOMgui, text="                                 ").grid(row=x+13,column=y)
     Label(BOMgui, text=newLabel).grid(row=x+13,column=y)
 
 def openCSVfile():
@@ -419,10 +412,24 @@ def guiFunctions():
     buttonThread.start()
     buttonThread.join()
     raise_above_all(BOMgui)
+    guiThread = Thread(target=guiUpdater, args=())
+    guiThread.start()
+    guiThread.join()
+
+def guiUpdater():
+    global searchResults
+    while 1:
+        displayPartData(searchResults)
+        time.sleep(2)
+    
 
 if __name__ == "__main__":
     BOMgui = Tk()
+    time.sleep(1)
     BOMgui.geometry('1200x1200')
+    time.sleep(1)
     mainThread = Thread(target=guiFunctions, args=())
+    time.sleep(1)
     mainThread.start()
+    time.sleep(1)
     BOMgui.mainloop()
